@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.task2group13.mapper.TypeMapper">
+
+
+    <insert id="addNewType">
+        insert into orderSystem.type(type_name, instruction, image) values
+        (#{typeName}, #{instruction}, #{image})
+    </insert>
+    <update id="updateTypeInfo">
+        update orderSystem.type
+        <set>
+            <if test="typeName != null and typeName != ''">
+                type_name = #{typeName},
+            </if>
+            <if test="instruction != null and instruction != ''">
+                instruction = #{instruction},
+            </if>
+            <if test="image != null">
+                image = #{image}
+            </if>
+        </set>
+        where type_id = #{typeId}
+    </update>
+</mapper>

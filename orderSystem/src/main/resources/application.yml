@@ -1,0 +1,41 @@
+# yml配置文件代替properties配置文件，同名为 application
+spring:
+  # 数据库连接
+  datasource:
+    driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+    # jdbc:sqlserver://localhost:1433;database=demo;;encrypt=true;trustServerCertificate=true
+    # 跳过sqlserver的安全验证
+    url: jdbc:sqlserver://localhost:1433;database=orderSystem;;encrypt=true;trustServerCertificate=true
+    username: sa
+    password: 1
+
+  servlet:
+    multipart:
+      # 文件上传的大小限制
+      max-file-size: 10MB
+      max-request-size: 100MB
+#  servlet:
+#    multipart:
+#      # 文件上传的大小限制
+#      max-file-size: 10MB
+#      max-request-size: 100MB
+
+# mybatis 配置
+mybatis:
+  configuration:
+    # 日志
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    # 驼峰和下划线转换
+    map-underscore-to-camel-case: true
+
+
+page helper:
+  # 因为是调用sqlserver，所以这里填写sqlserver
+  helper-dialect: sqlserver
+#spring事务管理日志
+logging:
+  level:
+    org.springframework.jdbc.support.JdbcTransactionManager: debug
+# 内嵌的Tomcat服务端
+server:
+  port: 8080

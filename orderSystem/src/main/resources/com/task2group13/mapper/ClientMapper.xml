@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.task2group13.mapper.ClientMapper">
+
+    <insert id="add">
+        insert into orderSystem.client(client_id, company_name, linkman_name, linkman_pos, address, city, zone, postcode, country, phone, fax)
+        values (#{clientId}, #{companyName}, #{linkmanName}, #{linkmanPos}, #{address}, #{city}, #{zone}, #{postcode}, #{country}, #{phone}, #{fax})
+    </insert>
+<!--    <insert id="add">-->
+<!--        {call orderSystem.InsertOrder ()}-->
+<!--    </insert>-->
+
+    <update id="update">
+        update orderSystem.client
+        <set>
+<!--            <if test="clientId != null">client_id = #{clientId},</if>-->
+            <if test="companyName != null">company_name = #{companyName},</if>
+            <if test="linkmanName != null">linkman_name = #{linkmanName},</if>
+            <if test="linkmanPos != null">linkman_pos = #{linkmanPos},</if>
+            <if test="address != null">address = #{address},</if>
+            <if test="city != null">city = #{city},</if>
+            <if test="zone != null">zone = #{zone},</if>
+            <if test="postcode != null">postcode = #{postcode},</if>
+            <if test="country != null">country = #{country},</if>
+            <if test="phone != null">phone = #{phone},</if>
+            <if test="fax != null">fax = #{fax}</if>
+        </set>
+        where client_id = #{clientId}
+    </update>
+    <select id="count" resultType="java.lang.Long">
+        select count(*)
+        from orderSystem.client
+        <where>
+            <if test="name != null">
+                linkman_name like concat('%', #{name}, '%')
+            </if>
+            <if test="address != null">
+                and address like concat('%', #{address}, '%')
+            </if>
+        </where>
+    </select>
+    <select id="getClientsList" resultType="com.task2group13.pojo.Client">
+        select * from orderSystem.client
+        <where>
+            <if test="name != null">
+                linkman_name like concat('%', #{name}, '%')
+            </if>
+            <if test="address != null">
+                and address like concat('%', #{address}, '%')
+            </if>
+        </where>
+    </select>
+    <select id="list" resultType="com.task2group13.pojo.Client">
+        select top ${pageSize}
+            client_id, company_name, linkman_name, linkman_pos, address,
+            city, zone, postcode, country, phone, fax
+        from orderSystem.client
+        <where>
+            <if test="name != null">
+                linkman_name like concat('%', #{name}, '%')
+            </if>
+            <if test="address != null">
+                and address like concat('%', #{address}, '%') and
+            </if>
+            client_id not in
+            (select top ${start} client_id from orderSystem.client)
+        </where>
+    </select>
+
+</mapper>

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.task2group13.mapper.ProductMapper">
+    <insert id="insertNewProduct">
+        insert into orderSystem.product(product_name, unit_number, unit_price, inventory, suspend, supplier_id, type_id)
+        values (#{productName}, #{unitNumber}, #{unitPrice}, #{inventory}, #{suspend}, #{supplierId}, #{typeId})
+    </insert>
+    <update id="updateProductInfo">
+        update orderSystem.product
+        <set>
+            <if test="productName != null and productName !=''">
+                product_name = #{productName},
+            </if>
+            <if test="unitNumber != null and unitNumber !=''">
+                unit_number = #{unitNumber},
+            </if>
+            <if test="unitPrice != null and unitPrice !=''">
+                unit_price = #{unitPrice},
+            </if>
+            <if test="inventory != null">
+                inventory = #{inventory},
+            </if>
+            <if test="suspend != null">
+                suspend = #{suspend},
+            </if>
+            <if test="typeId != null">
+                type_id = #{typeId},
+            </if>
+        </set>
+        where product_id = #{productId}
+    </update>
+
+    <select id="countBySupplierId" resultType="java.lang.Long">
+        select count(*) from orderSystem.product
+            <where>
+                <if test="id != null">
+                    supplier_id = #{id} or supplier_id is null
+                </if>
+            </where>
+    </select>
+    <!--    <select id=""-->
+<!--    select top ${pageSize} * from orderSystem.product where supplier_id = #{id} and supplier_id not in (select top ${start} supplier_id from orderSystem.product where supplier_id = #{id}-->
+<!--    -->
+
+    <select id="getBySupplierId" resultType="com.task2group13.pojo.Product">
+
+        select * from orderSystem.product
+                 <if test="id != null">
+                     where supplier_id = #{id} or supplier_id is null
+                     order by product_id
+                     offset #{start} row fetch next #{pageSize} row only
+                 </if>
+                 <if test="id == null">
+                     order by product_id
+                     offset #{start} row fetch next #{pageSize} row only
+                 </if>
+
+        <!--        select top ${pageSize} *-->
+<!--        from orderSystem.product-->
+<!--        <where>-->
+<!--            &lt;!&ndash;  没给传递这个supplier值，就是直接查询所有的product，并且对于那些没有供货商id的商品也都能看到  &ndash;&gt;-->
+<!--            <if test="id != null">-->
+<!--                supplier_id = #{id}-->
+<!--                and supplier_id not in-->
+<!--                (select top ${start} supplier_id-->
+<!--                from orderSystem.product-->
+<!--                where supplier_id = #{id} or supplier_id is null)-->
+
+<!--                -->
+<!--            </if>-->
+
+<!--            <if test="id == null">-->
+<!--                product_id not in-->
+<!--                (select top ${start} product_id-->
+<!--                from orderSystem.product)-->
+<!--            </if>-->
+
+<!--        </where>-->
+    </select>
+</mapper>

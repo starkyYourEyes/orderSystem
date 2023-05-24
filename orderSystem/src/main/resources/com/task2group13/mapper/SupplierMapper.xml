@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.task2group13.mapper.SupplierMapper">
+    <insert id="insertSupplier">
+        insert into orderSystem.supplier(company_name, linkman_name, linkman_pos, address, city, zone, postcode, country, phone, fax, homepage)
+        values(#{companyName}, #{linkmanName}, #{linkmanPos}, #{address}, #{city}, #{zone}, #{postcode}, #{country}, #{phone}, #{fax}, #{homepage})
+    </insert>
+
+    <update id="updateSupplier">
+        update orderSystem.supplier
+        <set>
+            <if test="companyName != null and companyName != ''">
+                company_name = #{companyName},
+            </if>
+            <if test="linkmanName != null and linkmanName != ''">
+                linkman_name = #{linkmanName},
+            </if>
+            <if test="linkmanPos != null and linkmanPos != ''">
+                linkman_pos = #{linkmanPos},
+            </if>
+            <if test="address != null and address != ''">
+                address = #{address},
+            </if>
+            <if test="city != null and city != ''">
+                city = #{city},
+            </if>
+            <if test="zone != null and zone != ''">
+                zone = #{zone},
+            </if>
+            <if test="postcode != null and postcode != ''">
+                postcode = #{postcode},
+            </if>
+            <if test="country != null and country != ''">
+                country = #{country},
+            </if>
+            <if test="phone != null and phone != ''">
+                phone = #{phone},
+            </if>
+            <if test="fax != null and fax != ''">
+                fax = #{fax},
+            </if>
+            <if test="homepage != null and homepage != ''">
+                homepage = #{homepage},
+            </if>
+        </set>
+        where supplier_id = #{supplierId}
+    </update>
+</mapper>

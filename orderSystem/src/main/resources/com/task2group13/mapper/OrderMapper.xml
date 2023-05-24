@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.task2group13.mapper.OrderMapper">
+    <!--   获取插入的订单的主键值    -->
+<!--    <insert id="addOrder" useGeneratedKeys="true" keyProperty="orderId">-->
+<!--        insert into orderSystem.[order](buy_date, deliver_date, arrive_date, confirm_date, owner_name, owner_address, owner_city, owner_zone, owner_postcode, owner_country, client_id, shipper_id) values-->
+<!--        (#{buyDate}, #{deliverDate}, #{arriveDate}, #{confirmDate}, #{ownerName}, #{ownerAddress}, #{ownerCity}, #{ownerZone}, #{ownerPostcode}, #{ownerCountry}, #{clientId}, #{shipperId})-->
+<!--    </insert>-->
+    <insert id="addOrder" useGeneratedKeys="true" keyProperty="orderId">
+        declare @orderId INT
+        exec orderSystem.InsertOrder
+            #{buyDate}, #{deliverDate}, #{arriveDate}, #{confirmDate},
+            #{ownerName}, #{ownerAddress}, #{ownerCity}, #{ownerZone},
+            #{ownerPostcode}, #{ownerCountry}, #{clientId}, #{shipperId} ,@orderId output
+        select @orderId
+    </insert>
+
+    <!-- 增加订单明细  -->
+    <insert id="orderDetails" parameterType="java.util.List">
+        insert into orderSystem.order_details(order_id, product_id, quantity) values
+        <foreach collection="orderDetailsList" item="item" index="index" separator=",">
+            (#{item.orderId}, #{item.productId}, #{item.quantity})
+        </foreach>
+    </insert>
+
+    <!--    修改订单    -->
+    <update id="update">
+        update orderSystem.[order]
+        <set>
+            <if test="deliverDate != null">deliver_date = #{deliverDate},</if>
+            <if test="arriveDate != null">arrive_date = #{arriveDate},</if>
+            <if test="confirmDate != null">confirm_date = #{confirmDate},</if>
+            <if test="ownerName != null and ownerName != ''">owner_name = #{ownerName},</if>
+            <if test="ownerAddress != null and ownerAddress != ''">owner_address = #{ownerAddress},</if>
+            <if test="ownerCity != null and ownerCity != ''">owner_city = #{ownerCity},</if>
+            <if test="ownerZone != null and ownerZone != ''">owner_zone = #{ownerZone},</if>
+            <if test="ownerPostcode != null and ownerPostcode != ''">owner_postcode = #{ownerPostcode},</if>
+            <if test="ownerCountry != null and ownerCountry != ''">owner_country = #{ownerCountry},</if>
+            <if test="clientId != null and clientId != ''">client_id = #{clientId},</if>
+            <if test="shipperId != null">shipper_id = #{shipperId}</if>
+        </set>
+        where order_id = #{orderId}
+    </update>
+    <!--   订单运输完成    -->
+    <update id="orderArrive">
+        update orderSystem.[order]
+        <set>
+            <if test="time != null">
+                arrive_date = #{time}
+            </if>
+        </set>
+        where order_id = #{ido}
+    </update>
+
+    <!--   分页查询    -->
+    <select id="page" resultType="com.task2group13.pojo.Order">
+        select top ${pageSize} *
+        from orderSystem.[order]
+        where order_id not in
+              (select top ${start} order_id
+               from orderSystem.[order] order by arrive_date desc ,deliver_date)
+        order by arrive_date desc ,deliver_date
+    </select>
+
+</mapper>
